@@ -5,7 +5,7 @@ const WIDTH = 30;
 const HEIGHT = 15;
 const START_GAME = 'go';
 
-let snake, direction, food, gameStarted = false, gameSpeed = 190;
+let snake, direction, food, gameSpeed, gameStarted = false;
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -13,6 +13,7 @@ const rl = readline.createInterface({
 });
 
 const initGame = () => {
+    gameSpeed = 190;
     snake = [{ x: Math.floor(WIDTH / 2), y: Math.floor(HEIGHT / 2) }];
     direction = { x: 1, y: 0 };
     food = { x: WIDTH - 3, y: HEIGHT - 3 };
