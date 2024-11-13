@@ -46,15 +46,12 @@ const handleKeyPress = () => {
 
     process.stdin.on('keypress', (str, { name: keyName }) => {
         const newDirection = keyMappings.get(keyName);
-        if (newDirection) {
-            if ((keyName === 'up' || keyName === 'down') && direction.y === 0) {
-                direction = newDirection;
-            } else if ((keyName === 'left' || keyName === 'right') && direction.x === 0) {
-                direction = newDirection;
-            }
+        if (newDirection && ((keyName === 'up' || keyName === 'down') ? direction.y === 0 : direction.x === 0)) {
+            direction = newDirection;
         }
     });
 };
+
 
 const drawGame = () => {
     process.stdout.write(ansiEscapes.clearScreen);
