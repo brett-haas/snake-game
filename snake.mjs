@@ -36,11 +36,19 @@ const promptStart = () => {
 const handleKeyPress = () => {
     readline.emitKeypressEvents(process.stdin);
     process.stdin.setRawMode(true);
-    process.stdin.on('keypress', (str, key) => {
-        if (key.name === 'up' && direction.y === 0) direction = { x: 0, y: -1 };
-        if (key.name === 'down' && direction.y === 0) direction = { x: 0, y: 1 };
-        if (key.name === 'left' && direction.x === 0) direction = { x: -1, y: 0 };
-        if (key.name === 'right' && direction.x === 0) direction = { x: 1, y: 0 };
+
+    const keyMappings = new Map([
+        ['up', { x: 0, y: -1 }],
+        ['down', { x: 0, y: 1 }],
+        ['left', { x: -1, y: 0 }],
+        ['right', { x: 1, y: 0 }]
+    ]);
+
+    process.stdin.on('keypress', (str, { name: keyName }) => {
+        const newDirection = keyMappings.get(keyName);
+        if (newDirection) {
+            direction = newDirection;
+        }
     });
 };
 
