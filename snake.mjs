@@ -16,7 +16,7 @@ let rl, snake, direction, food, gameSpeed;
 const initGame = () => {
     gameSpeed = 190;
     snake = [{ x: Math.floor(WIDTH / 2), y: Math.floor(HEIGHT / 2) }];
-    direction = { x: 1, y: 0 };
+    direction = MOVEMENT.get('right');
     food = { x: WIDTH - 3, y: HEIGHT - 3 };
     promptStart();
 };
