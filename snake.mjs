@@ -4,28 +4,35 @@ import ansiEscapes from 'ansi-escapes';
 const WIDTH = 30; 
 const HEIGHT = 15;
 const START_GAME = 'go';
+const MOVEMENT = new Map([
+    ['up', { x: 0, y: -1 }],
+    ['down', { x: 0, y: 1 }],
+    ['left', { x: -1, y: 0 }],
+    ['right', { x: 1, y: 0 }]
+]);
 
-let snake, direction, food, gameSpeed, gameStarted = false;
-
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+let rl, snake, direction, food, gameSpeed;
 
 const initGame = () => {
     gameSpeed = 190;
     snake = [{ x: Math.floor(WIDTH / 2), y: Math.floor(HEIGHT / 2) }];
     direction = { x: 1, y: 0 };
     food = { x: WIDTH - 3, y: HEIGHT - 3 };
-    gameStarted = false;
     promptStart();
 };
 
 const promptStart = () => {
+    if (rl)
+        rl.close();
+    
+    rl = readline.createInterface({ 
+        input: process.stdin,
+        output: process.stdout 
+    });
+
     rl.question(`Type "${START_GAME}" to start the game: `, (answer) => {
         if (answer.toLowerCase() === START_GAME) {
-            gameStarted = true;
-            gameLoop();
+            updateGame();
         } else {
             console.log('Game not started. Exiting...');
             process.exit();
@@ -33,28 +40,20 @@ const promptStart = () => {
     });
 };
 
-const handleKeyPress = () => {
-    readline.emitKeypressEvents(process.stdin);
+const keypressListener = () => {  
     process.stdin.setRawMode(true);
+    readline.emitKeypressEvents(process.stdin);
 
-    const keyMappings = new Map([
-        ['up', { x: 0, y: -1 }],
-        ['down', { x: 0, y: 1 }],
-        ['left', { x: -1, y: 0 }],
-        ['right', { x: 1, y: 0 }]
-    ]);
-
-    process.stdin.on('keypress', (str, { name: keyName }) => {
-        const newDirection = keyMappings.get(keyName);
-        if (newDirection) {
+    process.stdin.on('keypress', (str, key) => {
+        const newDirection = MOVEMENT.get(key.name);
+        if (newDirection)
             direction = newDirection;
-        }
     });
 };
 
 const drawGame = () => {
     process.stdout.write(ansiEscapes.clearScreen);
-    let display = Array.from({ length: HEIGHT }, () => Array(WIDTH).fill('.'));
+    const display = Array.from({ length: HEIGHT }, () => Array(WIDTH).fill('.'));
     snake.forEach(segment => {
         display[segment.y][segment.x] = '*';
     });
@@ -83,13 +82,8 @@ const updateGame = () => {
     }
 
     drawGame();
-    setTimeout(gameLoop, gameSpeed);
+    setTimeout(updateGame, gameSpeed);
 };
 
-const gameLoop = () => {
-    if (gameStarted) updateGame();
-};
-
-handleKeyPress();
+keypressListener();
 initGame();
-
