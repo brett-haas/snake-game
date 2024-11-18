@@ -63,6 +63,16 @@ const drawGame = () => {
     });
 };
 
+const hitWall = () => {
+    const head = snake[0];
+    return head.x < 0 || head.x >= WIDTH || head.y < 0 || head.y >= HEIGHT;
+}
+
+const selfCollision = () => {
+    const head = snake[0];
+    return snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y);
+}
+
 const updateGame = () => {
     const newHead = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
     snake.unshift(newHead);
@@ -74,8 +84,7 @@ const updateGame = () => {
         snake.pop();
     }
 
-    if (newHead.x < 0 || newHead.x >= WIDTH || newHead.y < 0 || newHead.y >= HEIGHT || 
-        snake.slice(1).some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
+    if (hitWall() || selfCollision()) {
         console.log(`Game over! Your snake was this long: ${snake.length}`);
         initGame();
         return;
@@ -87,3 +96,4 @@ const updateGame = () => {
 
 keypressListener();
 initGame();
+
